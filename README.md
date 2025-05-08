@@ -112,7 +112,7 @@ Choose an option [1-6]:
 
 ## 📌 Author
 
-**@yourusername** — proudly built for learning and refining Bash scripting.
+**@abdelsalam101** — proudly built for learning and refining Bash scripting.
 
 Feel free to contribute or fork the repo!
 

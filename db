@@ -1,0 +1,94 @@
+#!/bin/bash
+
+db_file="data.txt"
+
+init_db(){
+	echo "id,name,email" > "$db_file"
+	echo "Database Initialized."
+}
+
+create_entry(){
+	read -p "Name: " name
+	while [[ -z "$name" ]]
+	do
+	echo "Name cannot be empty."
+	read -p "Name: " name
+	done
+
+	read -p "Email: " email
+	while [[ ! "$email" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]
+	do
+	echo "Invalid email format."
+	read -p "Email: " email
+	done
+	
+	if grep -q ",$email$" "$db_file"
+	then
+	echo "This email already exists"
+	return
+	fi
+
+	last_id=$(tail -n +2 "$db_file" | cut -d',' -f1 | sort -n | tail -1)
+	if [[ -z "$last_id" ]]
+	then
+	new_id=1
+	else
+	new_id=$((last_id +1))
+	fi
+	
+	echo "$new_id,$name,$email" >> "$db_file"
+	echo "Entry added: $new_id,$name,$email"
+}
+
+read_all(){
+	if [[ ! -s "$db_file" ]]
+	then
+		echo "Database is empty"
+	return
+	fi
+	column -t -s',' "$db_file"
+}
+
+update_entry(){
+	read -p "Enter ID to Update: " id
+	while ! grep -q "^$id," "$db_file"
+	do
+		echo "ID not found. Try again."
+		read -p "Enter ID to Update: " id
+	done
+
+	read -p "New Name: " name
+	while [[ -z "$name" ]] 
+	do
+		echo "Name can not be Empty."
+		read -p "New Name: " name
+	done
+
+	read -p "New Email: " email
+	while [[ ! "$email" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; do
+        echo "Invalid email format."
+        read -p "New Email: " email
+	done
+
+	if grep -v "^$id," "$db_file" | grep -q ",$email$"
+	then
+		echo "This email is already used by another user"
+		return
+	fi
+
+	sed -i "/^$id,/d" "$db_file"
+	echo "$id,$name,$email" >> "$db_file"
+	echo "Entry Updated"
+}
+
+delete_entry(){
+	read -p "Enter ID to delete: " id
+	if grep -q "^$id," "$db_file"
+	then
+		sed -i "/^$id,/d" "$db_file"
+		echo "Entry deleted."
+	else
+		echo "ID not found, Nothing Deleted."
+	fi
+}
+

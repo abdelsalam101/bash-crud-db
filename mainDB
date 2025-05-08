@@ -1,0 +1,27 @@
+#!/bin/bash
+
+source ./db
+
+while true; do
+    echo ""
+    echo "====== Simple Bash Database ======"
+    echo "1. Initialize Database"
+    echo "2. Create Entry"
+    echo "3. Read All Entries"
+    echo "4. Update Entry"
+    echo "5. Delete Entry"
+    echo "6. Exit"
+    echo "=================================="
+    read -p "Choose an option [1-6]: " choice
+
+    case $choice in
+        1) init_db ;;
+        2) create_entry ;;
+        3) read_all ;;
+        4) update_entry ;;
+        5) delete_entry ;;
+        6) echo "Goodbye!"; break ;;
+        *) echo "Invalid option. Please try again." ;;
+    esac
+done
+
